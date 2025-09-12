@@ -1,7 +1,7 @@
 extends CharacterBody2D
 
-var MAX_SPEED = 1000
-const RUN = 720
+var MAX_SPEED = 400
+const RUN = 150
 
 func _process(delta):
 	var running = Input.get_action_strength("running")
@@ -11,6 +11,6 @@ func _process(delta):
 	if(running != 0):
 		MAX_SPEED = RUN
 	else:
-		MAX_SPEED = 360
+		MAX_SPEED = 100
 	velocity = direction * MAX_SPEED
 	move_and_slide()
