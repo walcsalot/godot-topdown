@@ -1,58 +1,101 @@
 extends CharacterBody2D
 
 var MAX_SPEED = 400
-const WALK = 100  # Default walking speed
-const RUN = 150   # Running speed
-var animated_sprite: AnimatedSprite2D  # Reference to the AnimatedSprite2D node
+const WALK = 100
+const RUN = 150
+var animated_sprite: AnimatedSprite2D
+var sword_sprite: SwordAnimatedSprite2D  # Reference to the sword sprite node
+
+var is_attacking = false
+var attack_direction = Vector2.ZERO
+var attack_cooldown = 0.5  # Attack animation length (seconds)
+var attack_timer = 0.0
 
 func _ready():
-	# Grab the AnimatedSprite2D node (make sure it's named correctly in the scene)
 	animated_sprite = $AnimatedSprite2D
+	sword_sprite = $SwordAnimatedSprite2D
+	sword_sprite.hide()  # Hide sword initially
 
 func _process(delta):
-	# Get the running state (if holding the "running" input action)
-	var running = Input.get_action_strength("running")
+	if is_attacking:
+		attack_timer -= delta
+		if attack_timer <= 0:
+			is_attacking = false
+			sword_sprite.hide()
 	
-	# Get the movement input vector
+	if not is_attacking:
+		handle_movement_and_animation()
+	
+func handle_movement_and_animation():
+	var running = Input.get_action_strength("running")
 	var input_vector = Input.get_vector("left", "right", "up", "down")
 	var direction = input_vector.normalized()
-
-	# Adjust MAX_SPEED based on whether the player is running or walking
+	
 	if running != 0:
 		MAX_SPEED = RUN
 	else:
 		MAX_SPEED = WALK
-
-	# Update velocity based on direction and speed
+	
 	velocity = direction * MAX_SPEED
-
-	# Handle animation based on the movement direction
+	
+	# Movement animations (same as your original)
 	if direction.length() > 0:
-		# If there is movement, play the appropriate walk animation
-		if direction.y < 0:
-			animated_sprite.play("walk_up")  # Play walking up animation
-		elif direction.y > 0:
-			animated_sprite.play("walk_down")  # Play walking down animation
-		elif direction.x < 0:
-			animated_sprite.play("walk_left")  # Play walking left animation
-		elif direction.x > 0:
-			animated_sprite.play("walk_right")  # Play walking right animation
+		if running != 0:
+			if direction.y < 0:
+				animated_sprite.play("run_up")
+			elif direction.y > 0:
+				animated_sprite.play("run_down")
+			elif direction.x < 0:
+				animated_sprite.play("run_left")
+			elif direction.x > 0:
+				animated_sprite.play("run_right")
+		else:
+			if direction.y < 0:
+				animated_sprite.play("walk_up")
+			elif direction.y > 0:
+				animated_sprite.play("walk_down")
+			elif direction.x < 0:
+				animated_sprite.play("walk_left")
+			elif direction.x > 0:
+				animated_sprite.play("walk_right")
 	else:
-		# If there is no movement, stop the walking animation and play idle animation based on direction
-		animated_sprite.stop()  # Stop the walking animation
-		
-		if direction.y < 0:
-			animated_sprite.play("idle_up")  # Play idle up animation
-		elif direction.y > 0:
-			animated_sprite.play("idle_down")  # Play idle down animation
-		elif direction.x < 0:
-			animated_sprite.play("idle_left")  # Play idle left animation
-		elif direction.x > 0:
-			animated_sprite.play("idle_right")  # Play idle right animation
-
-	# Move the character
+		animated_sprite.stop()
+		# Default idle direction fallback (use last facing direction or some stored direction)
+		# For now, just idle_down as default:
+		animated_sprite.play("idle_down")
+	
 	move_and_slide()
 
+func _input(event):
+	if event.is_action_pressed("attack") and not is_attacking:
+		var input_vector = Input.get_vector("left", "right", "up", "down")
+		var direction = input_vector.normalized()
+		
+		# If no direction input, default to down
+		if direction == Vector2.ZERO:
+			direction = Vector2.DOWN
+		
+		start_attack(direction)
 
-func _on_button_pressed() -> void:
-	pass # Replace with function body.
+func start_attack(direction: Vector2):
+	is_attacking = true
+	attack_timer = attack_cooldown
+	attack_direction = direction
+	
+	# Play character attack animation
+	if direction.y < 0:
+		animated_sprite.play("attack_up")
+		sword_sprite.position = Vector2(1, -8)  # Push sword upward
+	elif direction.y > 0:
+		animated_sprite.play("attack_down")
+		sword_sprite.position = Vector2(-1, 8)   # Push sword downward
+	elif direction.x < 0:
+		animated_sprite.play("attack_left")
+		sword_sprite.position = Vector2(-16, 0)  # Push sword left
+	elif direction.x > 0:
+		animated_sprite.play("attack_right")
+		sword_sprite.position = Vector2(16, 0)   # Push sword right
+	
+	# Show and play sword animation
+	sword_sprite.show()
+	sword_sprite.play_sword_animation(direction)
