@@ -11,6 +11,8 @@ var attack_direction = Vector2.ZERO
 var attack_cooldown = 0.5  # Attack animation length (seconds)
 var attack_timer = 0.0
 
+var last_direction = Vector2.DOWN  # Track last movement/facing direction
+
 func _ready():
 	animated_sprite = $AnimatedSprite2D
 	sword_sprite = $SwordAnimatedSprite2D
@@ -25,7 +27,7 @@ func _process(delta):
 	
 	if not is_attacking:
 		handle_movement_and_animation()
-	
+
 func handle_movement_and_animation():
 	var running = Input.get_action_strength("running")
 	var input_vector = Input.get_vector("left", "right", "up", "down")
@@ -38,8 +40,10 @@ func handle_movement_and_animation():
 	
 	velocity = direction * MAX_SPEED
 	
-	# Movement animations (same as your original)
+	# Movement animations
 	if direction.length() > 0:
+		last_direction = direction  # Update last direction when moving
+
 		if running != 0:
 			if direction.y < 0:
 				animated_sprite.play("run_up")
@@ -60,9 +64,15 @@ func handle_movement_and_animation():
 				animated_sprite.play("walk_right")
 	else:
 		animated_sprite.stop()
-		# Default idle direction fallback (use last facing direction or some stored direction)
-		# For now, just idle_down as default:
-		animated_sprite.play("idle_down")
+		# Use last_direction to choose correct idle animation
+		if last_direction.y < 0:
+			animated_sprite.play("idle_up")
+		elif last_direction.y > 0:
+			animated_sprite.play("idle_down")
+		elif last_direction.x < 0:
+			animated_sprite.play("idle_left")
+		elif last_direction.x > 0:
+			animated_sprite.play("idle_right")
 	
 	move_and_slide()
 
@@ -71,9 +81,9 @@ func _input(event):
 		var input_vector = Input.get_vector("left", "right", "up", "down")
 		var direction = input_vector.normalized()
 		
-		# If no direction input, default to down
+		# If no direction input, use last movement/facing direction
 		if direction == Vector2.ZERO:
-			direction = Vector2.DOWN
+			direction = last_direction
 		
 		start_attack(direction)
 
@@ -81,20 +91,21 @@ func start_attack(direction: Vector2):
 	is_attacking = true
 	attack_timer = attack_cooldown
 	attack_direction = direction
+	last_direction = direction  # Optional: update facing direction when attacking
 	
 	# Play character attack animation
 	if direction.y < 0:
 		animated_sprite.play("attack_up")
-		sword_sprite.position = Vector2(1, -8)  # Push sword upward
+		sword_sprite.position = Vector2(1, -7)  # Push sword upward
 	elif direction.y > 0:
 		animated_sprite.play("attack_down")
-		sword_sprite.position = Vector2(-1, 8)   # Push sword downward
+		sword_sprite.position = Vector2(-1, 7)   # Push sword downward
 	elif direction.x < 0:
 		animated_sprite.play("attack_left")
-		sword_sprite.position = Vector2(-16, 0)  # Push sword left
+		sword_sprite.position = Vector2(-7, 0)  # Push sword left
 	elif direction.x > 0:
 		animated_sprite.play("attack_right")
-		sword_sprite.position = Vector2(16, 0)   # Push sword right
+		sword_sprite.position = Vector2(7, 0)   # Push sword right
 	
 	# Show and play sword animation
 	sword_sprite.show()

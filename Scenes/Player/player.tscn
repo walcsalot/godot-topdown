@@ -1,8 +1,16 @@
-[gd_scene load_steps=99 format=3 uid="uid://16ldtem0rbst"]
+[gd_scene load_steps=107 format=3 uid="uid://16ldtem0rbst"]
 
 [ext_resource type="Script" uid="uid://b22c6a114d72x" path="res://Scenes/Player/player.gd" id="1_a3d8c"]
 [ext_resource type="Texture2D" uid="uid://ckjxuctt3rqww" path="res://assets/16x16 Animated Top-down Character V1.1/Full Spritesheet.png" id="2_a3d8c"]
+[ext_resource type="Texture2D" path="res://assets/test/ner92_045.png" id="3_74mp2"]
 [ext_resource type="Script" uid="uid://bu163e6r8vw04" path="res://Scenes/Player/sword_animated_sprite.gd" id="3_xpcdj"]
+[ext_resource type="Texture2D" path="res://assets/test/ner92_046.png" id="4_oikmp"]
+[ext_resource type="Texture2D" path="res://assets/test/ner92_047.png" id="5_06tpx"]
+[ext_resource type="Texture2D" path="res://assets/test/ner92_048.png" id="6_7g0yx"]
+[ext_resource type="Texture2D" path="res://assets/test/ner92_049.png" id="7_dey5f"]
+[ext_resource type="Texture2D" path="res://assets/test/ner92_050.png" id="8_r5xpd"]
+[ext_resource type="Texture2D" path="res://assets/test/ner92_051.png" id="9_ks1b7"]
+[ext_resource type="Texture2D" path="res://assets/test/ner92_052.png" id="10_hnuln"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_a3d8c"]
 atlas = ExtResource("2_a3d8c")
@@ -380,6 +388,35 @@ animations = [{
 }],
 "loop": false,
 "name": &"idle_down",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_74mp2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_oikmp")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_06tpx")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_7g0yx")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_dey5f")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_r5xpd")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_ks1b7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_hnuln")
+}],
+"loop": true,
+"name": &"idle_downtest",
 "speed": 10.0
 }, {
 "frames": [{
@@ -907,11 +944,13 @@ script = ExtResource("1_a3d8c")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_ejxfg")
-animation = &"attack_up"
+animation = &"idle_downtest"
+frame_progress = 0.321112
 
 [node name="SwordAnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+z_index = -1
 sprite_frames = SubResource("SpriteFrames_ml2j2")
-animation = &"sword_up"
+animation = &"sword_right"
 script = ExtResource("3_xpcdj")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

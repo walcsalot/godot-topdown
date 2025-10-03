@@ -1,0 +1,47 @@
+[gd_scene load_steps=4 format=3 uid="uid://c41w7uw3vt11i"]
+
+[ext_resource type="Texture2D" uid="uid://bo53cdv0rhiuv" path="res://Menu/UI/Menu Buttons/Large Buttons/Large Buttons/Play Button.png" id="1_ihied"]
+[ext_resource type="Script" uid="uid://cwv4ao6lhw4w1" path="res://Menu/menu.gd" id="1_raj00"]
+[ext_resource type="Texture2D" uid="uid://dw0ns1wwgvx7c" path="res://Menu/UI/Menu Buttons/Large Buttons/Large Buttons/Exit Button.png" id="2_raj00"]
+
+[node name="menu" type="Node2D"]
+script = ExtResource("1_raj00")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+metadata/_edit_use_anchors_ = true
+
+[node name="Play" type="TextureButton" parent="Control"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -2.5
+anchor_top = 2.175
+anchor_right = 5.0
+anchor_bottom = 4.65
+offset_right = 300.0
+offset_bottom = 101.0
+scale = Vector2(0.5, 0.5)
+texture_normal = ExtResource("1_ihied")
+metadata/_edit_use_anchors_ = true
+
+[node name="Quit" type="TextureButton" parent="Control"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 9.5
+anchor_top = 2.175
+anchor_right = 17.0
+anchor_bottom = 4.675
+offset_right = 300.0
+offset_bottom = 100.0
+scale = Vector2(0.5, 0.5)
+texture_normal = ExtResource("2_raj00")
+metadata/_edit_use_anchors_ = true
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(294, -49)
+
+[connection signal="pressed" from="Control/Play" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="Control/Quit" to="." method="_on_quit_pressed"]
